@@ -420,7 +420,7 @@ async function sendMessage() {
         }
 
         /* ✅ YOUR PRINCIPLE — ONLY THIS */
-        puter.ai.chat(text, { model: "gpt-4o" })
+        puter.ai.chat(text, { model: "gpt-5-nano" })
             .then(response => {
                 thinkingBubble.innerHTML = response.replace(/\n/g, "<br>");
                 addMessageToSession(response, "bot");
