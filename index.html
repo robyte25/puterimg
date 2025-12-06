@@ -2,61 +2,102 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Puter AI – Text zu Bild</title>
+    <title>Puter AI – Mini Chat</title>
     <script src="https://js.puter.com/v2/"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
             background: #111;
             color: #eee;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #chat {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        .msg {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        .user {
+            background: #4a90e2;
+            margin-left: auto;
+        }
+        .bot {
+            background: #333;
+            margin-right: auto;
+        }
+        #inputArea {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
         }
         #prompt {
-            width: 80%;
+            flex: 1;
             padding: 10px;
             font-size: 16px;
         }
-        #generateBtn {
+        #sendBtn {
             padding: 10px 20px;
             font-size: 16px;
-            margin-left: 10px;
             cursor: pointer;
-        }
-        #output img {
-            margin-top: 20px;
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
         }
     </style>
 </head>
 <body>
 
-    <h1>Puter AI – Text zu Bild Generator</h1>
+    <h1>Puter AI – Mini Chat</h1>
 
-    <input id="prompt" type="text" placeholder="Gib hier deinen Prompt ein...">
-    <button id="generateBtn">Bild generieren</button>
+    <div id="chat"></div>
 
-    <div id="output"></div>
+    <div id="inputArea">
+        <input id="prompt" type="text" placeholder="Schreibe eine Nachricht...">
+        <button id="sendBtn">Senden</button>
+    </div>
 
     <script>
-        document.getElementById("generateBtn").addEventListener("click", async () => {
-            const prompt = document.getElementById("prompt").value.trim();
-            const output = document.getElementById("output");
+        const chatBox = document.getElementById("chat");
+        const input = document.getElementById("prompt");
+        const sendBtn = document.getElementById("sendBtn");
 
-            if (!prompt) {
-                output.innerHTML = "<p>Bitte gib einen Prompt ein.</p>";
-                return;
-            }
+        function addMessage(text, sender) {
+            const div = document.createElement("div");
+            div.className = "msg " + sender;
+            div.textContent = text;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
-            output.innerHTML = "<p>Bild wird generiert...</p>";
+        sendBtn.addEventListener("click", async () => {
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, "user");
+            input.value = "";
+
+            addMessage("Denke nach...", "bot");
 
             try {
-                const img = await puter.ai.txt2img(prompt, { model: "gpt-image-1" });
-                output.innerHTML = "";
-                output.appendChild(img);
+                const response = await puter.ai.chat(text, {
+                    model: "gpt-5-nano"
+                });
+
+                // Entferne den "Denke nach..." Platzhalter
+                chatBox.removeChild(chatBox.lastChild);
+
+                addMessage(response, "bot");
             } catch (err) {
-                output.innerHTML = "<p>Fehler bei der Bildgenerierung.</p>";
+                chatBox.removeChild(chatBox.lastChild);
+                addMessage("Fehler bei der Anfrage.", "bot");
                 console.error(err);
             }
         });
