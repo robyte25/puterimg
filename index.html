@@ -2,8 +2,9 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Puter AI – Ultra Chat</title>
+    <title>Puter AI – Ultra Chat (Responsive)</title>
     <script src="https://js.puter.com/v2/"></script>
+
     <style>
         :root {
             --bg: #111;
@@ -36,8 +37,42 @@
             overflow: hidden;
         }
 
-        #sidebar {
+        /* Gerätespezifische Layouts */
+        /* Mobile: Sidebar aus, Vollbreite Chat */
+        body.mobile #sidebar {
+            display: none;
+        }
+        body.mobile #main {
+            width: 100%;
+        }
+        body.mobile #chat {
+            padding: 10px;
+        }
+        body.mobile #prompt {
+            font-size: 16px;
+        }
+        body.mobile #sendBtn {
+            font-size: 16px;
+        }
+        body.mobile #menuToggle {
+            display: inline-block;
+        }
+
+        /* Tablet: schmalere Sidebar */
+        body.tablet #sidebar {
+            width: 180px;
+        }
+        body.tablet #chat {
+            padding: 12px;
+        }
+
+        /* Desktop: volle Sidebar */
+        body.desktop #sidebar {
             width: 250px;
+        }
+
+        /* SIDEBAR */
+        #sidebar {
             background: var(--bg-sidebar);
             border-right: 1px solid #333;
             display: flex;
@@ -57,18 +92,546 @@
             font-size: 16px;
         }
 
-        #newChatBtn {
+        #newChatBtn, #themeToggle {
             padding: 5px 10px;
             font-size: 12px;
             cursor: pointer;
         }
 
-        #themeToggle {
+        #chatList {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+            font-size: 14px;
+        }
+
+        .chat-item.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* MAIN */
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #topbar {
+            padding: 10px 15px;
+            border-bottom: 1px solid #333;
+            background: var(--bg-panel);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        #topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #topbar-left h1 {
+            margin: 0;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+
+        #menuToggle {
+            display: none; /* wird auf Mobile sichtbar gemacht */
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #modelSelect {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        #exportBtn, #imageModeBtn {
             padding: 5px 10px;
             font-size: 12px;
             cursor: pointer;
-            margin-left: 8px;
         }
+
+        /* CHAT */
+        #chatContainer {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+        }
+
+        #chat {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .msg {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .msg.user {
+            flex-direction: row-reverse;
+        }
+
+        .bubble {
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+            line-height: 1.4;
+            background: var(--bubble-bot);
+            color: var(--text);
+            word-wrap: break-word;
+        }
+
+        .user .bubble {
+            background: var(--bubble-user);
+            color: #fff;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        /* INPUT */
+        #inputArea {
+            border-top: 1px solid #333;
+            padding: 10px;
+            background: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #inputRow {
+            display: flex;
+            gap: 10px;
+        }
+
+        #prompt {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        #sendBtn {
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #inputOptions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        #micBtn, #ttsToggle {
+            padding: 5px 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div id="sidebar">
+        <div id="sidebar-header">
+            <h2>Chats</h2>
+            <div>
+                <button id="newChatBtn">Neu</button>
+                <button id="themeToggle">Light</button>
+            </div>
+        </div>
+        <div id="chatList"></div>
+    </div>
+
+    <!-- MAIN -->
+    <div id="main">
+        <div id="topbar">
+            <div id="topbar-left">
+                <button id="menuToggle">☰</button>
+                <h1>Puter Ultra Chat</h1>
+            </div>
+
+            <div id="topbar-right">
+                <select id="modelSelect">
+                    <option value="gpt-4.1-mini">GPT‑4.1 Mini</option>
+                    <option value="gpt-4o-mini">GPT‑4o Mini</option>
+                    <option value="gpt-4.1">GPT‑4.1</option>
+                    <option value="gpt-4o">GPT‑4o</option>
+                </select>
+
+                <button id="imageModeBtn">Text‑Modus</button>
+                <button id="exportBtn">Export</button>
+            </div>
+        </div>
+
+        <div id="chatContainer">
+            <div id="chat"></div>
+
+            <div id="inputArea">
+                <div id="inputRow">
+                    <input id="prompt" type="text" placeholder="Nachricht oder Bild‑Prompt...">
+                    <button id="sendBtn">Senden</button>
+                </div>
+
+                <div id="inputOptions">
+                    <span id="modeLabel">Modus: Chat</span>
+
+                    <div>
+                        <button id="micBtn">🎙 Mic</button>
+                        <button id="ttsToggle">🔊 TTS an</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+/* -------------------------
+   DEVICE DETECTION & LAYOUT
+------------------------- */
+
+function detectDevice() {
+    const ua = navigator.userAgent.toLowerCase();
+    if (/mobile|iphone|android|phone/.test(ua)) {
+        return "mobile";
+    }
+    if (/tablet|ipad/.test(ua)) {
+        return "tablet";
+    }
+    return "desktop";
+}
+
+const deviceType = detectDevice();
+console.log("Gerät erkannt:", deviceType);
+
+function applyDeviceLayout() {
+    const body = document.body;
+    body.classList.remove("mobile", "tablet", "desktop");
+
+    if (deviceType === "mobile") {
+        body.classList.add("mobile");
+    } else if (deviceType === "tablet") {
+        body.classList.add("tablet");
+    } else {
+        body.classList.add("desktop");
+    }
+}
+
+applyDeviceLayout();
+
+/* -------------------------
+   STATE & INITIALIZATION
+------------------------- */
+
+const chatBox = document.getElementById("chat");
+const input = document.getElementById("prompt");
+const sendBtn = document.getElementById("sendBtn");
+const modelSelect = document.getElementById("modelSelect");
+const newChatBtn = document.getElementById("newChatBtn");
+const chatList = document.getElementById("chatList");
+const exportBtn = document.getElementById("exportBtn");
+const imageModeBtn = document.getElementById("imageModeBtn");
+const modeLabel = document.getElementById("modeLabel");
+const themeToggle = document.getElementById("themeToggle");
+const micBtn = document.getElementById("micBtn");
+const ttsToggle = document.getElementById("ttsToggle");
+const menuToggle = document.getElementById("menuToggle");
+const sidebar = document.getElementById("sidebar");
+
+let sessions = JSON.parse(localStorage.getItem("ultraSessions") || "[]");
+let currentSessionId = null;
+let imageMode = false;
+let ttsEnabled = true;
+
+const userAvatar = "https://i.imgur.com/4ZQZ4ZQ.png";
+const botAvatar = "https://i.imgur.com/8Km9tLL.png";
+
+/* -------------------------
+   THEME RESTORE
+------------------------- */
+
+const storedTheme = localStorage.getItem("theme");
+if (storedTheme === "light") {
+    document.body.classList.add("light");
+    themeToggle.textContent = "Dark";
+}
+
+/* -------------------------
+   SESSION HANDLING
+------------------------- */
+
+function saveSessions() {
+    localStorage.setItem("ultraSessions", JSON.stringify(sessions));
+}
+
+function createSession() {
+    const id = Date.now().toString();
+    sessions.push({ id, title: "Neuer Chat", messages: [] });
+    currentSessionId = id;
+    saveSessions();
+    renderSessionList();
+    renderCurrentSession();
+}
+
+function getCurrentSession() {
+    return sessions.find(s => s.id === currentSessionId);
+}
+
+function renderSessionList() {
+    chatList.innerHTML = "";
+    sessions.forEach(s => {
+        const div = document.createElement("div");
+        div.className = "chat-item" + (s.id === currentSessionId ? " active" : "");
+        div.textContent = s.title;
+        div.onclick = () => {
+            currentSessionId = s.id;
+            renderSessionList();
+            renderCurrentSession();
+            if (document.body.classList.contains("mobile")) {
+                sidebar.style.display = "none";
+            }
+        };
+        chatList.appendChild(div);
+    });
+    if (sessions.length === 0) {
+        const div = document.createElement("div");
+        div.className = "chat-item";
+        div.textContent = "Keine Chats. Erstelle einen neuen.";
+        chatList.appendChild(div);
+    }
+}
+
+function renderCurrentSession() {
+    chatBox.innerHTML = "";
+    const session = getCurrentSession();
+    if (!session) return;
+
+    session.messages.forEach(m => {
+        if (m.type === "image") {
+            const bubble = addMessageToUI("", m.sender, true);
+            const img = document.createElement("img");
+            img.src = m.text;
+            img.style.maxWidth = "300px";
+            img.style.borderRadius = "8px";
+            bubble.innerHTML = "";
+            bubble.appendChild(img);
+        } else {
+            addMessageToUI(m.text, m.sender, false);
+        }
+    });
+}
+
+function addMessageToSession(text, sender, type = "text") {
+    const session = getCurrentSession();
+    if (!session) return;
+    session.messages.push({ text, sender, type });
+    if (session.title === "Neuer Chat" && sender === "user") {
+        session.title = text.slice(0, 30) + (text.length > 30 ? "…" : "");
+    }
+    saveSessions();
+    renderSessionList();
+}
+
+/* -------------------------
+   UI MESSAGE RENDERING
+------------------------- */
+
+function addMessageToUI(text, sender, isImage = false) {
+    const msg = document.createElement("div");
+    msg.className = "msg " + sender;
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.style.backgroundImage = `url(${sender === "user" ? userAvatar : botAvatar})`;
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerHTML = isImage ? "Bild wird geladen..." : text.replace(/\n/g, "<br>");
+
+    msg.appendChild(avatar);
+    msg.appendChild(bubble);
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    return bubble;
+}
+
+/* -------------------------
+   SEND MESSAGE
+------------------------- */
+
+async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = "";
+
+    addMessageToSession(text, "user");
+    addMessageToUI(text, "user");
+
+    const thinkingBubble = addMessageToUI("Denke nach…", "bot");
+
+    try {
+        if (imageMode) {
+            const imgElem = await puter.ai.txt2img(text, { model: "gpt-image-1" });
+
+            thinkingBubble.innerHTML = "";
+            imgElem.style.maxWidth = "300px";
+            imgElem.style.borderRadius = "8px";
+            thinkingBubble.appendChild(imgElem);
+
+            addMessageToSession(imgElem.src, "bot", "image");
+        } else {
+            const response = await puter.ai.chat(
+                [{ role: "user", content: text }],
+                { model: modelSelect.value }
+            );
+
+            thinkingBubble.innerHTML = response.replace(/\n/g, "<br>");
+            addMessageToSession(response, "bot");
+
+            if (ttsEnabled && "speechSynthesis" in window) {
+                const utter = new SpeechSynthesisUtterance(response);
+                utter.lang = "de-DE";
+                speechSynthesis.speak(utter);
+            }
+        }
+    } catch (err) {
+        thinkingBubble.innerHTML = "Fehler bei der Anfrage.";
+        console.error(err);
+    }
+}
+
+/* -------------------------
+   EVENT LISTENERS
+------------------------- */
+
+sendBtn.onclick = sendMessage;
+
+input.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+newChatBtn.onclick = createSession;
+
+imageModeBtn.onclick = () => {
+    imageMode = !imageMode;
+    imageModeBtn.textContent = imageMode ? "Bild‑Modus" : "Text‑Modus";
+    modeLabel.textContent = "Modus: " + (imageMode ? "Bild" : "Chat");
+};
+
+ttsToggle.onclick = () => {
+    ttsEnabled = !ttsEnabled;
+    ttsToggle.textContent = ttsEnabled ? "🔊 TTS an" : "🔇 TTS aus";
+};
+
+themeToggle.onclick = () => {
+    document.body.classList.toggle("light");
+    const isLight = document.body.classList.contains("light");
+    themeToggle.textContent = isLight ? "Dark" : "Light";
+    localStorage.setItem("theme", isLight ? "light" : "dark");
+};
+
+micBtn.onclick = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+        alert("Spracherkennung nicht unterstützt.");
+        return;
+    }
+    const rec = new SR();
+    rec.lang = "de-DE";
+    rec.start();
+
+    micBtn.textContent = "🎙…";
+
+    rec.onresult = e => {
+        input.value = e.results[0][0].transcript;
+        micBtn.textContent = "🎙 Mic";
+    };
+    rec.onerror = () => micBtn.textContent = "🎙 Mic";
+    rec.onend = () => micBtn.textContent = "🎙 Mic";
+};
+
+exportBtn.onclick = () => {
+    const session = getCurrentSession();
+    if (!session) return;
+
+    let text = "Chat Export – " + (session.title || "Unbenannter Chat") + "\n\n";
+    session.messages.forEach(m => {
+        text += (m.sender === "user" ? "Du: " : "Bot: ");
+        text += m.type === "image" ? "[Bild] " + m.text : m.text;
+        text += "\n";
+    });
+
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "chat_export.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
+/* Sidebar-Menü für Mobile */
+menuToggle.onclick = () => {
+    if (sidebar.style.display === "none" || sidebar.style.display === "") {
+        sidebar.style.display = "flex";
+    } else {
+        sidebar.style.display = "none";
+    }
+};
+
+/* -------------------------
+   INITIAL LOAD
+------------------------- */
+
+if (sessions.length === 0) {
+    createSession();
+} else {
+    currentSessionId = sessions[0].id;
+    renderSessionList();
+    renderCurrentSession();
+}
+
+</script>
+</body>
+</html>        }
 
         #chatList {
             flex: 1;
