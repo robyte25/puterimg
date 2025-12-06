@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Puter AI – Text zu Bild</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #111;
+            color: #eee;
+        }
+        #prompt {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #generateBtn {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        #output img {
+            margin-top: 20px;
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Puter AI – Text zu Bild Generator</h1>
+
+    <input id="prompt" type="text" placeholder="Gib hier deinen Prompt ein...">
+    <button id="generateBtn">Bild generieren</button>
+
+    <div id="output"></div>
+
+    <script>
+        document.getElementById("generateBtn").addEventListener("click", async () => {
+            const prompt = document.getElementById("prompt").value.trim();
+            const output = document.getElementById("output");
+
+            if (!prompt) {
+                output.innerHTML = "<p>Bitte gib einen Prompt ein.</p>";
+                return;
+            }
+
+            output.innerHTML = "<p>Bild wird generiert...</p>";
+
+            try {
+                const img = await puter.ai.txt2img(prompt, { model: "gpt-image-1" });
+                output.innerHTML = "";
+                output.appendChild(img);
+            } catch (err) {
+                output.innerHTML = "<p>Fehler bei der Bildgenerierung.</p>";
+                console.error(err);
+            }
+        });
+    </script>
+
+</body>
+</html>
