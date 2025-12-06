@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Puter AI – Ultra Chat (Responsive)</title>
+    <title>Puter Ultra Chat – Clean UI</title>
     <script src="https://js.puter.com/v2/"></script>
 
     <style>
@@ -26,6 +26,10 @@
             --bubble-bot: #dddddd;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -38,7 +42,6 @@
         }
 
         /* Gerätespezifische Layouts */
-        /* Mobile: Sidebar aus, Vollbreite Chat */
         body.mobile #sidebar {
             display: none;
         }
@@ -58,7 +61,6 @@
             display: inline-block;
         }
 
-        /* Tablet: schmalere Sidebar */
         body.tablet #sidebar {
             width: 180px;
         }
@@ -66,7 +68,6 @@
             padding: 12px;
         }
 
-        /* Desktop: volle Sidebar */
         body.desktop #sidebar {
             width: 250px;
         }
@@ -145,7 +146,7 @@
         }
 
         #menuToggle {
-            display: none; /* wird auf Mobile sichtbar gemacht */
+            display: none;
             padding: 5px 10px;
             font-size: 16px;
             cursor: pointer;
@@ -260,6 +261,21 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 800px) {
+            #topbar-left h1 {
+                font-size: 16px;
+            }
+            #topbar-right {
+                gap: 5px;
+            }
+            #modelSelect {
+                font-size: 12px;
+            }
+            #exportBtn, #imageModeBtn {
+                font-size: 11px;
+            }
         }
     </style>
 </head>
@@ -608,10 +624,10 @@ exportBtn.onclick = () => {
     URL.revokeObjectURL(url);
 };
 
-/* Sidebar-Menü für Mobile */
 menuToggle.onclick = () => {
-    if (sidebar.style.display === "none" || sidebar.style.display === "") {
+    if (getComputedStyle(sidebar).display === "none") {
         sidebar.style.display = "flex";
+        sidebar.style.flexDirection = "column";
     } else {
         sidebar.style.display = "none";
     }
@@ -628,554 +644,6 @@ if (sessions.length === 0) {
     renderSessionList();
     renderCurrentSession();
 }
-
 </script>
-</body>
-</html>        }
-
-        #chatList {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .chat-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #333;
-            font-size: 14px;
-        }
-
-        .chat-item.active {
-            background: var(--accent);
-            color: #fff;
-        }
-
-        .chat-item span {
-            display: block;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        #main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #topbar {
-            padding: 10px 15px;
-            border-bottom: 1px solid #333;
-            background: var(--bg-panel);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        #topbar-left h1 {
-            margin: 0;
-            font-size: 18px;
-        }
-
-        #topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #modelSelect {
-            padding: 5px;
-            font-size: 14px;
-        }
-
-        #exportBtn, #imageModeBtn {
-            padding: 5px 10px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        #chatContainer {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-panel);
-        }
-
-        #chat {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-        }
-
-        .msg {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            animation: fadeIn 0.25s ease;
-        }
-
-        .msg.user {
-            flex-direction: row-reverse;
-        }
-
-        .bubble {
-            padding: 10px;
-            border-radius: 10px;
-            max-width: 70%;
-            line-height: 1.4;
-            background: var(--bubble-bot);
-            color: var(--text);
-            word-wrap: break-word;
-        }
-
-        .user .bubble {
-            background: var(--bubble-user);
-            color: #fff;
-        }
-
-        .avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background-size: cover;
-            background-position: center;
-            flex-shrink: 0;
-        }
-
-        #inputArea {
-            border-top: 1px solid #333;
-            padding: 10px;
-            background: var(--bg-panel);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        #inputRow {
-            display: flex;
-            gap: 10px;
-        }
-
-        #prompt {
-            flex: 1;
-            padding: 8px;
-            font-size: 14px;
-        }
-
-        #sendBtn {
-            padding: 8px 16px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        #inputOptions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-        }
-
-        #modeLabel {
-            font-style: italic;
-        }
-
-        #micBtn, #ttsToggle {
-            padding: 5px 8px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        a {
-            color: #ffd479;
-        }
-    </style>
-</head>
-<body>
-    <!-- SIDEBAR -->
-    <div id="sidebar">
-        <div id="sidebar-header">
-            <h2>Chats</h2>
-            <div>
-                <button id="newChatBtn">Neu</button>
-                <button id="themeToggle">Light</button>
-            </div>
-        </div>
-        <div id="chatList"></div>
-    </div>
-
-    <!-- MAIN -->
-    <div id="main">
-        <div id="topbar">
-            <div id="topbar-left">
-                <h1>Puter AI – Ultra Chat</h1>
-            </div>
-            <div id="topbar-right">
-                <select id="modelSelect">
-                    <option value="gpt-5-nano">GPT‑5 Nano (schnell)</option>
-                    <option value="gpt-4.1-mini">GPT‑4.1 Mini (präziser)</option>
-                    <option value="gpt-4o-mini">GPT‑4o Mini (balance)</option>
-                </select>
-                <button id="imageModeBtn">Text‑Modus</button>
-                <button id="exportBtn">Export</button>
-            </div>
-        </div>
-
-        <div id="chatContainer">
-            <div id="chat"></div>
-
-            <div id="inputArea">
-                <div id="inputRow">
-                    <input id="prompt" type="text" placeholder="Schreibe eine Nachricht oder einen Bild‑Prompt...">
-                    <button id="sendBtn">Senden</button>
-                </div>
-                <div id="inputOptions">
-                    <span id="modeLabel">Modus: Chat</span>
-                    <div>
-                        <button id="micBtn">🎙 Mic</button>
-                        <button id="ttsToggle">🔊 TTS an</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- Basis-Refs ---
-        const body = document.body;
-        const chatBox = document.getElementById("chat");
-        const input = document.getElementById("prompt");
-        const sendBtn = document.getElementById("sendBtn");
-        const modelSelect = document.getElementById("modelSelect");
-        const newChatBtn = document.getElementById("newChatBtn");
-        const chatList = document.getElementById("chatList");
-        const exportBtn = document.getElementById("exportBtn");
-        const imageModeBtn = document.getElementById("imageModeBtn");
-        const modeLabel = document.getElementById("modeLabel");
-        const themeToggle = document.getElementById("themeToggle");
-        const micBtn = document.getElementById("micBtn");
-        const ttsToggle = document.getElementById("ttsToggle");
-
-        // --- Einstellungen / State ---
-        const userAvatar = "https://i.imgur.com/4ZQZ4ZQ.png";
-        const botAvatar = "https://i.imgur.com/8Km9tLL.png";
-
-        let sessions = JSON.parse(localStorage.getItem("puterUltraChatSessions") || "[]");
-        let currentSessionId = null;
-        let imageMode = false;
-        let ttsEnabled = true;
-
-        // Theme-Initialisierung
-        let storedTheme = localStorage.getItem("puterUltraChatTheme") || "dark";
-        if (storedTheme === "light") {
-            body.classList.add("light");
-            themeToggle.textContent = "Dark";
-        }
-
-        function saveSessions() {
-            localStorage.setItem("puterUltraChatSessions", JSON.stringify(sessions));
-        }
-
-        function createSession() {
-            const id = Date.now().toString();
-            const session = {
-                id,
-                title: "Neuer Chat",
-                messages: []
-            };
-            sessions.push(session);
-            saveSessions();
-            currentSessionId = id;
-            renderSessionList();
-            renderCurrentSession();
-        }
-
-        function getCurrentSession() {
-            return sessions.find(s => s.id === currentSessionId);
-        }
-
-        function setSessionTitleFromFirstMessage(session) {
-            if (session.messages.length > 0) {
-                const firstUserMsg = session.messages.find(m => m.sender === "user");
-                if (firstUserMsg) {
-                    session.title = firstUserMsg.text.slice(0, 30) + (firstUserMsg.text.length > 30 ? "…" : "");
-                }
-            }
-        }
-
-        function renderSessionList() {
-            chatList.innerHTML = "";
-            sessions.forEach(s => {
-                const div = document.createElement("div");
-                div.className = "chat-item" + (s.id === currentSessionId ? " active" : "");
-                const span = document.createElement("span");
-                span.textContent = s.title || "Unbenannter Chat";
-                div.appendChild(span);
-                div.addEventListener("click", () => {
-                    currentSessionId = s.id;
-                    renderSessionList();
-                    renderCurrentSession();
-                });
-                chatList.appendChild(div);
-            });
-
-            if (sessions.length === 0) {
-                const div = document.createElement("div");
-                div.className = "chat-item";
-                div.innerHTML = "<span>Keine Chats. Erstelle einen neuen.</span>";
-                chatList.appendChild(div);
-            }
-        }
-
-        function clearChatBox() {
-            chatBox.innerHTML = "";
-        }
-
-        function addMessageToUI(text, sender, isImage = false) {
-            const msg = document.createElement("div");
-            msg.className = "msg " + sender;
-
-            const avatar = document.createElement("div");
-            avatar.className = "avatar";
-            avatar.style.backgroundImage = `url(${sender === "user" ? userAvatar : botAvatar})`;
-
-            const bubble = document.createElement("div");
-            bubble.className = "bubble";
-
-            if (isImage) {
-                bubble.textContent = "Bild wird geladen...";
-            } else {
-                bubble.innerHTML = text.replace(/\n/g, "<br>");
-            }
-
-            msg.appendChild(avatar);
-            msg.appendChild(bubble);
-            chatBox.appendChild(msg);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            return bubble;
-        }
-
-        function renderCurrentSession() {
-            clearChatBox();
-            const session = getCurrentSession();
-            if (!session) return;
-
-            session.messages.forEach(m => {
-                if (m.type === "image") {
-                    const bubble = addMessageToUI("", m.sender, true);
-                    // Image nachladen (URL speichern wir im Text)
-                    const img = document.createElement("img");
-                    img.src = m.text;
-                    img.style.maxWidth = "300px";
-                    img.style.borderRadius = "8px";
-                    bubble.textContent = "";
-                    bubble.appendChild(img);
-                } else {
-                    addMessageToUI(m.text, m.sender, false);
-                }
-            });
-        }
-
-        function addMessageToSession(text, sender, type = "text") {
-            const session = getCurrentSession();
-            if (!session) return;
-
-            const msgObj = { text, sender, type };
-            session.messages.push(msgObj);
-
-            if (session.title === "Neuer Chat") {
-                setSessionTitleFromFirstMessage(session);
-            }
-
-            saveSessions();
-        }
-
-        // Initialzustand: Falls keine Sessions existieren, eine erstellen
-        if (sessions.length === 0) {
-            createSession();
-        } else {
-            currentSessionId = sessions[0].id;
-            renderSessionList();
-            renderCurrentSession();
-        }
-
-        // --- Theme Toggle ---
-        themeToggle.addEventListener("click", () => {
-            body.classList.toggle("light");
-            const isLight = body.classList.contains("light");
-            themeToggle.textContent = isLight ? "Dark" : "Light";
-            localStorage.setItem("puterUltraChatTheme", isLight ? "light" : "dark");
-        });
-
-        // --- Neuer Chat ---
-        newChatBtn.addEventListener("click", () => {
-            createSession();
-        });
-
-        // --- Modus: Chat / Bild ---
-        imageModeBtn.addEventListener("click", () => {
-            imageMode = !imageMode;
-            imageModeBtn.textContent = imageMode ? "Bild‑Modus" : "Text‑Modus";
-            modeLabel.textContent = "Modus: " + (imageMode ? "Bild (txt2img)" : "Chat");
-        });
-
-        // --- TTS Toggle (für Bot‑Antworten) ---
-        ttsToggle.addEventListener("click", () => {
-            ttsEnabled = !ttsEnabled;
-            ttsToggle.textContent = ttsEnabled ? "🔊 TTS an" : "🔇 TTS aus";
-        });
-
-        // --- Mic (Browser Speech Recognition, wenn vorhanden) ---
-        micBtn.addEventListener("click", () => {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("Spracherkennung wird von diesem Browser nicht unterstützt.");
-                return;
-            }
-            const rec = new SpeechRecognition();
-            rec.lang = "de-DE";
-            rec.interimResults = false;
-            rec.maxAlternatives = 1;
-            rec.start();
-            micBtn.textContent = "🎙…";
-
-            rec.onresult = (e) => {
-                const transcript = e.results[0][0].transcript;
-                input.value = transcript;
-                micBtn.textContent = "🎙 Mic";
-            };
-            rec.onerror = () => {
-                micBtn.textContent = "🎙 Mic";
-            };
-            rec.onend = () => {
-                micBtn.textContent = "🎙 Mic";
-            };
-        });
-
-        // --- Export Chat als Text ---
-        exportBtn.addEventListener("click", () => {
-            const session = getCurrentSession();
-            if (!session) return;
-            let text = "Chat Export – " + (session.title || "Unbenannter Chat") + "\n\n";
-            session.messages.forEach(m => {
-                text += (m.sender === "user" ? "Du: " : "Bot: ");
-                if (m.type === "image") {
-                    text += "[Bild] " + m.text + "\n";
-                } else {
-                    text += m.text + "\n";
-                }
-            });
-
-            const blob = new Blob([text], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "chat_export.txt";
-            a.click();
-            URL.revokeObjectURL(url);
-        });
-
-        async function sendMessage() {
-            const text = input.value.trim();
-            if (!text) return;
-            input.value = "";
-
-            // Nutzer-Nachricht
-            addMessageToSession(text, "user", "text");
-            addMessageToUI(text, "user", false);
-
-            // Bot Platzhalter
-            const thinkingBubble = addMessageToUI("Denke nach…", "bot", false);
-
-            try {
-                if (imageMode) {
-                    // Bild-Modus: txt2img
-                    const imgElem = await puter.ai.txt2img(text, {
-                        model: "gpt-image-1"
-                    });
-
-                    // Platzhalter ersetzen mit Bild
-                    thinkingBubble.innerHTML = "";
-                    imgElem.style.maxWidth = "300px";
-                    imgElem.style.borderRadius = "8px";
-                    thinkingBubble.appendChild(imgElem);
-
-                    // Bild-URL speichern (falls vorhanden)
-                    const src = imgElem.src || "";
-                    addMessageToSession(src, "bot", "image");
-                } else {
-                    // Chat-Modus
-                    const response = await puter.ai.chat(text, {
-                        model: modelSelect.value
-                    });
-
-                    thinkingBubble.innerHTML = response.replace(/\n/g, "<br>");
-                    addMessageToSession(response, "bot", "text");
-
-                    if (ttsEnabled && window.speechSynthesis) {
-                        const utter = new SpeechSynthesisUtterance(response);
-                        utter.lang = "de-DE";
-                        speechSynthesis.speak(utter);
-                    }
-                }
-
-                saveSessions();
-                renderSessionList();
-            } catch (err) {
-                thinkingBubble.innerHTML = "Fehler bei der Anfrage.";
-                console.error(err);
-            }
-        }
-
-        sendBtn.addEventListener("click", sendMessage);
-
-        input.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-    </script>
-</body>
-</html>
-        function addMessage(text, sender) {
-            const div = document.createElement("div");
-            div.className = "msg " + sender;
-            div.textContent = text;
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        sendBtn.addEventListener("click", async () => {
-            const text = input.value.trim();
-            if (!text) return;
-
-            addMessage(text, "user");
-            input.value = "";
-
-            addMessage("Denke nach...", "bot");
-
-            try {
-                const response = await puter.ai.chat(text, {
-                    model: "gpt-5-nano"
-                });
-
-                // Entferne den "Denke nach..." Platzhalter
-                chatBox.removeChild(chatBox.lastChild);
-
-                addMessage(response, "bot");
-            } catch (err) {
-                chatBox.removeChild(chatBox.lastChild);
-                addMessage("Fehler bei der Anfrage.", "bot");
-                console.error(err);
-            }
-        });
-    </script>
-
 </body>
 </html>
