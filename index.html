@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Puter Ultra Chat – Clean UI</title>
+    <title>Puter Ultra Chat – gpt‑4o Version</title>
     <script src="https://js.puter.com/v2/"></script>
 
     <style>
@@ -26,9 +26,7 @@
             --bubble-bot: #dddddd;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -41,36 +39,16 @@
             overflow: hidden;
         }
 
-        /* Gerätespezifische Layouts */
-        body.mobile #sidebar {
-            display: none;
-        }
-        body.mobile #main {
-            width: 100%;
-        }
-        body.mobile #chat {
-            padding: 10px;
-        }
-        body.mobile #prompt {
-            font-size: 16px;
-        }
-        body.mobile #sendBtn {
-            font-size: 16px;
-        }
-        body.mobile #menuToggle {
-            display: inline-block;
-        }
+        /* Mobile Layout */
+        body.mobile #sidebar { display: none; }
+        body.mobile #main { width: 100%; }
+        body.mobile #menuToggle { display: inline-block; }
 
-        body.tablet #sidebar {
-            width: 180px;
-        }
-        body.tablet #chat {
-            padding: 12px;
-        }
+        /* Tablet */
+        body.tablet #sidebar { width: 180px; }
 
-        body.desktop #sidebar {
-            width: 250px;
-        }
+        /* Desktop */
+        body.desktop #sidebar { width: 250px; }
 
         /* SIDEBAR */
         #sidebar {
@@ -88,10 +66,7 @@
             align-items: center;
         }
 
-        #sidebar-header h2 {
-            margin: 0;
-            font-size: 16px;
-        }
+        #sidebar-header h2 { margin: 0; font-size: 16px; }
 
         #newChatBtn, #themeToggle {
             padding: 5px 10px;
@@ -130,7 +105,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+        }
+
+        #menuToggle {
+            display: none;
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
         }
 
         #topbar-left {
@@ -142,14 +123,6 @@
         #topbar-left h1 {
             margin: 0;
             font-size: 18px;
-            white-space: nowrap;
-        }
-
-        #menuToggle {
-            display: none;
-            padding: 5px 10px;
-            font-size: 16px;
-            cursor: pointer;
         }
 
         #topbar-right {
@@ -158,12 +131,7 @@
             gap: 8px;
         }
 
-        #modelSelect {
-            padding: 5px;
-            font-size: 14px;
-        }
-
-        #exportBtn, #imageModeBtn {
+        #imageModeBtn, #exportBtn {
             padding: 5px 10px;
             font-size: 12px;
             cursor: pointer;
@@ -190,18 +158,14 @@
             animation: fadeIn 0.25s ease;
         }
 
-        .msg.user {
-            flex-direction: row-reverse;
-        }
+        .msg.user { flex-direction: row-reverse; }
 
         .bubble {
             padding: 10px;
             border-radius: 10px;
             max-width: 70%;
-            line-height: 1.4;
             background: var(--bubble-bot);
             color: var(--text);
-            word-wrap: break-word;
         }
 
         .user .bubble {
@@ -215,7 +179,6 @@
             border-radius: 50%;
             background-size: cover;
             background-position: center;
-            flex-shrink: 0;
         }
 
         /* INPUT */
@@ -248,13 +211,11 @@
         #inputOptions {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             font-size: 12px;
         }
 
         #micBtn, #ttsToggle {
             padding: 5px 8px;
-            font-size: 12px;
             cursor: pointer;
         }
 
@@ -262,121 +223,70 @@
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        @media (max-width: 800px) {
-            #topbar-left h1 {
-                font-size: 16px;
-            }
-            #topbar-right {
-                gap: 5px;
-            }
-            #modelSelect {
-                font-size: 12px;
-            }
-            #exportBtn, #imageModeBtn {
-                font-size: 11px;
-            }
-        }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <div id="sidebar">
-        <div id="sidebar-header">
-            <h2>Chats</h2>
-            <div>
-                <button id="newChatBtn">Neu</button>
-                <button id="themeToggle">Light</button>
-            </div>
+<!-- SIDEBAR -->
+<div id="sidebar">
+    <div id="sidebar-header">
+        <h2>Chats</h2>
+        <div>
+            <button id="newChatBtn">Neu</button>
+            <button id="themeToggle">Light</button>
         </div>
-        <div id="chatList"></div>
+    </div>
+    <div id="chatList"></div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+    <div id="topbar">
+        <div id="topbar-left">
+            <button id="menuToggle">☰</button>
+            <h1>Puter Ultra Chat</h1>
+        </div>
+
+        <div id="topbar-right">
+            <button id="imageModeBtn">Text‑Modus</button>
+            <button id="exportBtn">Export</button>
+        </div>
     </div>
 
-    <!-- MAIN -->
-    <div id="main">
-        <div id="topbar">
-            <div id="topbar-left">
-                <button id="menuToggle">☰</button>
-                <h1>Puter Ultra Chat</h1>
+    <div id="chatContainer">
+        <div id="chat"></div>
+
+        <div id="inputArea">
+            <div id="inputRow">
+                <input id="prompt" type="text" placeholder="Nachricht oder Bild‑Prompt...">
+                <button id="sendBtn">Senden</button>
             </div>
 
-            <div id="topbar-right">
-                <select id="modelSelect">
-                    <option value="gpt-4.1-mini">GPT‑4.1 Mini</option>
-                    <option value="gpt-4o-mini">GPT‑4o Mini</option>
-                    <option value="gpt-4.1">GPT‑4.1</option>
-                    <option value="gpt-4o">GPT‑4o</option>
-                </select>
-
-                <button id="imageModeBtn">Text‑Modus</button>
-                <button id="exportBtn">Export</button>
-            </div>
-        </div>
-
-        <div id="chatContainer">
-            <div id="chat"></div>
-
-            <div id="inputArea">
-                <div id="inputRow">
-                    <input id="prompt" type="text" placeholder="Nachricht oder Bild‑Prompt...">
-                    <button id="sendBtn">Senden</button>
-                </div>
-
-                <div id="inputOptions">
-                    <span id="modeLabel">Modus: Chat</span>
-
-                    <div>
-                        <button id="micBtn">🎙 Mic</button>
-                        <button id="ttsToggle">🔊 TTS an</button>
-                    </div>
+            <div id="inputOptions">
+                <span id="modeLabel">Modus: Chat</span>
+                <div>
+                    <button id="micBtn">🎙 Mic</button>
+                    <button id="ttsToggle">🔊 TTS an</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 <script>
-/* -------------------------
-   DEVICE DETECTION & LAYOUT
-------------------------- */
-
+/* DEVICE DETECTION */
 function detectDevice() {
     const ua = navigator.userAgent.toLowerCase();
-    if (/mobile|iphone|android|phone/.test(ua)) {
-        return "mobile";
-    }
-    if (/tablet|ipad/.test(ua)) {
-        return "tablet";
-    }
+    if (/mobile|iphone|android|phone/.test(ua)) return "mobile";
+    if (/tablet|ipad/.test(ua)) return "tablet";
     return "desktop";
 }
+document.body.classList.add(detectDevice());
 
-const deviceType = detectDevice();
-console.log("Gerät erkannt:", deviceType);
-
-function applyDeviceLayout() {
-    const body = document.body;
-    body.classList.remove("mobile", "tablet", "desktop");
-
-    if (deviceType === "mobile") {
-        body.classList.add("mobile");
-    } else if (deviceType === "tablet") {
-        body.classList.add("tablet");
-    } else {
-        body.classList.add("desktop");
-    }
-}
-
-applyDeviceLayout();
-
-/* -------------------------
-   STATE & INITIALIZATION
-------------------------- */
-
+/* STATE */
 const chatBox = document.getElementById("chat");
 const input = document.getElementById("prompt");
 const sendBtn = document.getElementById("sendBtn");
-const modelSelect = document.getElementById("modelSelect");
 const newChatBtn = document.getElementById("newChatBtn");
 const chatList = document.getElementById("chatList");
 const exportBtn = document.getElementById("exportBtn");
@@ -396,20 +306,13 @@ let ttsEnabled = true;
 const userAvatar = "https://i.imgur.com/4ZQZ4ZQ.png";
 const botAvatar = "https://i.imgur.com/8Km9tLL.png";
 
-/* -------------------------
-   THEME RESTORE
-------------------------- */
-
-const storedTheme = localStorage.getItem("theme");
-if (storedTheme === "light") {
+/* THEME RESTORE */
+if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
     themeToggle.textContent = "Dark";
 }
 
-/* -------------------------
-   SESSION HANDLING
-------------------------- */
-
+/* SESSION HANDLING */
 function saveSessions() {
     localStorage.setItem("ultraSessions", JSON.stringify(sessions));
 }
@@ -437,18 +340,10 @@ function renderSessionList() {
             currentSessionId = s.id;
             renderSessionList();
             renderCurrentSession();
-            if (document.body.classList.contains("mobile")) {
-                sidebar.style.display = "none";
-            }
+            if (document.body.classList.contains("mobile")) sidebar.style.display = "none";
         };
         chatList.appendChild(div);
     });
-    if (sessions.length === 0) {
-        const div = document.createElement("div");
-        div.className = "chat-item";
-        div.textContent = "Keine Chats. Erstelle einen neuen.";
-        chatList.appendChild(div);
-    }
 }
 
 function renderCurrentSession() {
@@ -466,14 +361,13 @@ function renderCurrentSession() {
             bubble.innerHTML = "";
             bubble.appendChild(img);
         } else {
-            addMessageToUI(m.text, m.sender, false);
+            addMessageToUI(m.text, m.sender);
         }
     });
 }
 
 function addMessageToSession(text, sender, type = "text") {
     const session = getCurrentSession();
-    if (!session) return;
     session.messages.push({ text, sender, type });
     if (session.title === "Neuer Chat" && sender === "user") {
         session.title = text.slice(0, 30) + (text.length > 30 ? "…" : "");
@@ -482,10 +376,7 @@ function addMessageToSession(text, sender, type = "text") {
     renderSessionList();
 }
 
-/* -------------------------
-   UI MESSAGE RENDERING
-------------------------- */
-
+/* UI MESSAGE */
 function addMessageToUI(text, sender, isImage = false) {
     const msg = document.createElement("div");
     msg.className = "msg " + sender;
@@ -506,10 +397,7 @@ function addMessageToUI(text, sender, isImage = false) {
     return bubble;
 }
 
-/* -------------------------
-   SEND MESSAGE
-------------------------- */
-
+/* SEND MESSAGE — YOUR PRINCIPLE */
 async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
@@ -523,45 +411,41 @@ async function sendMessage() {
     try {
         if (imageMode) {
             const imgElem = await puter.ai.txt2img(text, { model: "gpt-image-1" });
-
             thinkingBubble.innerHTML = "";
             imgElem.style.maxWidth = "300px";
             imgElem.style.borderRadius = "8px";
             thinkingBubble.appendChild(imgElem);
-
             addMessageToSession(imgElem.src, "bot", "image");
-        } else {
-            const response = await puter.ai.chat(
-                [{ role: "user", content: text }],
-                { model: modelSelect.value }
-            );
-
-            thinkingBubble.innerHTML = response.replace(/\n/g, "<br>");
-            addMessageToSession(response, "bot");
-
-            if (ttsEnabled && "speechSynthesis" in window) {
-                const utter = new SpeechSynthesisUtterance(response);
-                utter.lang = "de-DE";
-                speechSynthesis.speak(utter);
-            }
+            return;
         }
+
+        /* ✅ YOUR PRINCIPLE — ONLY THIS */
+        puter.ai.chat(text, { model: "gpt-4o" })
+            .then(response => {
+                thinkingBubble.innerHTML = response.replace(/\n/g, "<br>");
+                addMessageToSession(response, "bot");
+
+                if (ttsEnabled) {
+                    const utter = new SpeechSynthesisUtterance(response);
+                    utter.lang = "de-DE";
+                    speechSynthesis.speak(utter);
+                }
+            })
+            .catch(err => {
+                thinkingBubble.innerHTML = "Fehler bei der Anfrage.";
+                console.error(err);
+            });
+
     } catch (err) {
         thinkingBubble.innerHTML = "Fehler bei der Anfrage.";
         console.error(err);
     }
 }
 
-/* -------------------------
-   EVENT LISTENERS
-------------------------- */
-
+/* EVENTS */
 sendBtn.onclick = sendMessage;
-
 input.addEventListener("keydown", e => {
-    if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-    }
+    if (e.key === "Enter") { e.preventDefault(); sendMessage(); }
 });
 
 newChatBtn.onclick = createSession;
@@ -586,35 +470,24 @@ themeToggle.onclick = () => {
 
 micBtn.onclick = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-        alert("Spracherkennung nicht unterstützt.");
-        return;
-    }
+    if (!SR) return alert("Spracherkennung nicht unterstützt.");
     const rec = new SR();
     rec.lang = "de-DE";
     rec.start();
-
     micBtn.textContent = "🎙…";
-
-    rec.onresult = e => {
-        input.value = e.results[0][0].transcript;
-        micBtn.textContent = "🎙 Mic";
-    };
+    rec.onresult = e => { input.value = e.results[0][0].transcript; micBtn.textContent = "🎙 Mic"; };
     rec.onerror = () => micBtn.textContent = "🎙 Mic";
     rec.onend = () => micBtn.textContent = "🎙 Mic";
 };
 
 exportBtn.onclick = () => {
     const session = getCurrentSession();
-    if (!session) return;
-
-    let text = "Chat Export – " + (session.title || "Unbenannter Chat") + "\n\n";
+    let text = "Chat Export – " + session.title + "\n\n";
     session.messages.forEach(m => {
         text += (m.sender === "user" ? "Du: " : "Bot: ");
         text += m.type === "image" ? "[Bild] " + m.text : m.text;
         text += "\n";
     });
-
     const blob = new Blob([text], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -625,21 +498,13 @@ exportBtn.onclick = () => {
 };
 
 menuToggle.onclick = () => {
-    if (getComputedStyle(sidebar).display === "none") {
-        sidebar.style.display = "flex";
-        sidebar.style.flexDirection = "column";
-    } else {
-        sidebar.style.display = "none";
-    }
+    sidebar.style.display =
+        getComputedStyle(sidebar).display === "none" ? "flex" : "none";
 };
 
-/* -------------------------
-   INITIAL LOAD
-------------------------- */
-
-if (sessions.length === 0) {
-    createSession();
-} else {
+/* INITIAL LOAD */
+if (sessions.length === 0) createSession();
+else {
     currentSessionId = sessions[0].id;
     renderSessionList();
     renderCurrentSession();
