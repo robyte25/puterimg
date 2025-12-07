@@ -352,17 +352,7 @@ function renderCurrentSession() {
     if (!session) return;
 
     session.messages.forEach(m => {
-        if (m.type === "image") {
-            const bubble = addMessageToUI("", m.sender, true);
-            const img = document.createElement("img");
-            img.src = m.text;
-            img.style.maxWidth = "300px";
-            img.style.borderRadius = "8px";
-            bubble.innerHTML = "";
-            bubble.appendChild(img);
-        } else {
-            addMessageToUI(m.text || "", m.sender);
-        }
+        addMessageToUI(m.text || "", m.sender, m.type === "image");
     });
 }
 
@@ -386,7 +376,12 @@ function addMessageToUI(text, sender, isImage = false) {
 
     const bubble = document.createElement("div");
     bubble.className = "bubble";
-    bubble.innerHTML = isImage ? "Bild wird geladen..." : (text || "").replace(/\n/g, "<br>");
+
+    if (isImage) {
+        bubble.innerHTML = "Bild wird geladen...";
+    } else {
+        bubble.innerHTML = (text ?? "").toString().replace(/\n/g, "<br>");
+    }
 
     msg.appendChild(avatar);
     msg.appendChild(bubble);
@@ -421,15 +416,12 @@ async function sendMessage() {
 
         const selectedModel = modelSelect.value;
 
-        // Dein Prinzip + richtige Antwortstruktur
-        puter.ai.chat(text, { model: selectedModel })
+        // ✅ Dein Prinzip + simple: true + korrekte Antwortauslese
+        puter.ai.chat(text, { model: selectedModel, simple: true })
             .then(response => {
-                const msg = response?.response; // Hier liefert Puter den Text
+                const msg = response ?? "Keine Antwort erhalten.";
 
-                thinkingBubble.innerHTML = msg
-                    ? msg.replace(/\n/g, "<br>")
-                    : "Keine Antwort erhalten.";
-
+                thinkingBubble.innerHTML = msg.replace(/\n/g, "<br>");
                 addMessageToSession(msg, "bot");
 
                 if (ttsEnabled && msg) {
