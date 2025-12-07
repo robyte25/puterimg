@@ -8,7 +8,7 @@
     <style>
         :root {
             --bg: #111;
-            --bg-panel: #1d1d1d;
+            --bg-panel: #11d1d1d;
             --bg-sidebar: #181818;
             --text: #eee;
             --accent: #4a90e2;
@@ -416,24 +416,28 @@ async function sendMessage() {
 
         const selectedModel = modelSelect.value;
 
-        // ✅ Dein Prinzip + simple: true + korrekte Antwortauslese
-        puter.ai.chat(text, { model: selectedModel, simple: true })
-            .then(response => {
-                const msg = response ?? "Keine Antwort erhalten.";
+        // ✅ Neues, stabiles Format
+        puter.ai.chat([
+            { role: "user", content: text }
+        ], {
+            model: selectedModel
+        })
+        .then(response => {
+            const msg = response?.choices?.[0]?.message?.content || "Keine Antwort erhalten.";
 
-                thinkingBubble.innerHTML = msg.replace(/\n/g, "<br>");
-                addMessageToSession(msg, "bot");
+            thinkingBubble.innerHTML = msg.replace(/\n/g, "<br>");
+            addMessageToSession(msg, "bot");
 
-                if (ttsEnabled && msg) {
-                    const utter = new SpeechSynthesisUtterance(msg);
-                    utter.lang = "de-DE";
-                    speechSynthesis.speak(utter);
-                }
-            })
-            .catch(err => {
-                thinkingBubble.innerHTML = "Fehler bei der Anfrage.";
-                console.error(err);
-            });
+            if (ttsEnabled && msg) {
+                const utter = new SpeechSynthesisUtterance(msg);
+                utter.lang = "de-DE";
+                speechSynthesis.speak(utter);
+            }
+        })
+        .catch(err => {
+            thinkingBubble.innerHTML = "Fehler bei der Anfrage.";
+            console.error(err);
+        });
 
     } catch (err) {
         thinkingBubble.innerHTML = "Fehler bei der Anfrage.";
