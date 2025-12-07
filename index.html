@@ -2,38 +2,56 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Puter Ultra Chat – Einfach</title>
+    <title>Puter Ultra Chat – Deluxe</title>
+
+    <!-- Puter SDK -->
     <script src="https://js.puter.com/v2/"></script>
+
+    <!-- Markdown + Code Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 
     <style>
         :root {
-            --bg: #111;
-            --bg-panel: #1d1d1d;
-            --bg-sidebar: #181818;
-            --text: #eee;
-            --accent: #4a90e2;
-            --bubble-user: #4a90e2;
-            --bubble-bot: #333;
+            --bg: #050509;
+            --bg-panel: #0b0b12;
+            --bg-sidebar: #080810;
+            --border-subtle: #252538;
+            --text: #f5f5ff;
+            --text-muted: #9ca3af;
+            --accent: #4f46e5;
+            --accent-soft: rgba(79, 70, 229, 0.18);
+            --bubble-user: linear-gradient(135deg, #4f46e5, #6366f1);
+            --bubble-bot: #111827;
+            --radius-lg: 14px;
+            --radius-md: 10px;
+            --shadow-soft: 0 18px 40px rgba(0,0,0,0.45);
         }
 
         body.light {
-            --bg: #f4f4f4;
+            --bg: #f3f4f6;
             --bg-panel: #ffffff;
-            --bg-sidebar: #e6e6e6;
-            --text: #111;
-            --accent: #3366cc;
-            --bubble-user: #3366cc;
-            --bubble-bot: #dddddd;
+            --bg-sidebar: #f9fafb;
+            --border-subtle: #e5e7eb;
+            --text: #111827;
+            --text-muted: #6b7280;
+            --accent: #2563eb;
+            --accent-soft: rgba(37, 99, 235, 0.12);
+            --bubble-user: linear-gradient(135deg, #2563eb, #4f46e5);
+            --bubble-bot: #f3f4f6;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
             padding: 0;
-            background: var(--bg);
+            background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
             color: var(--text);
-            font-family: Arial, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             display: flex;
             height: 100vh;
             overflow: hidden;
@@ -41,69 +59,141 @@
 
         body.mobile #sidebar { display: none; }
         body.mobile #main { width: 100%; }
-        body.mobile #menuToggle { display: inline-block; }
+        body.mobile #menuToggle { display: inline-flex; }
 
-        body.tablet #sidebar { width: 180px; }
-        body.desktop #sidebar { width: 250px; }
+        body.tablet #sidebar { width: 200px; }
+        body.desktop #sidebar { width: 260px; }
+
+        /* Layout */
 
         #sidebar {
-            background: var(--bg-sidebar);
-            border-right: 1px solid #333;
+            background: linear-gradient(180deg, var(--bg-sidebar), #020617);
+            border-right: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
+            box-shadow: 8px 0 20px rgba(0,0,0,0.4);
+            z-index: 10;
         }
 
         #sidebar-header {
-            padding: 15px;
-            border-bottom: 1px solid #333;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
         }
 
-        #sidebar-header h2 { margin: 0; font-size: 16px; }
+        #sidebar-header h2 {
+            margin: 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
 
-        #newChatBtn, #themeToggle {
-            padding: 5px 10px;
+        #sidebar-header .btn-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        button {
+            border-radius: 999px;
+            border: 1px solid transparent;
+            background: var(--accent-soft);
+            color: var(--text);
             font-size: 12px;
+            padding: 6px 12px;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease-out;
+        }
+
+        button:hover {
+            background: rgba(79, 70, 229, 0.28);
+            transform: translateY(-1px);
+        }
+
+        button.secondary {
+            background: transparent;
+            border-color: var(--border-subtle);
+            color: var(--text-muted);
+        }
+
+        button.secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(79, 70, 229, 0.16);
         }
 
         #chatList {
             flex: 1;
             overflow-y: auto;
+            padding: 8px;
         }
 
         .chat-item {
-            padding: 10px 15px;
+            padding: 8px 10px;
             cursor: pointer;
-            border-bottom: 1px solid #333;
-            font-size: 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid transparent;
         }
 
         .chat-item.active {
+            background: var(--accent-soft);
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        .chat-item:hover {
+            background: rgba(148, 163, 184, 0.12);
+        }
+
+        .chat-item .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
             background: var(--accent);
-            color: #fff;
+        }
+
+        #sidebar-footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 10px 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         #main {
             flex: 1;
             display: flex;
             flex-direction: column;
+            backdrop-filter: blur(18px);
         }
 
         #topbar {
-            padding: 10px 15px;
-            border-bottom: 1px solid #333;
-            background: var(--bg-panel);
+            padding: 10px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(90deg, rgba(15,23,42,0.96), rgba(15,23,42,0.88));
             display: flex;
             align-items: center;
             justify-content: space-between;
+            position: relative;
+            z-index: 5;
         }
 
         #menuToggle {
             display: none;
-            padding: 5px 10px;
+            padding: 6px 10px;
             font-size: 16px;
             cursor: pointer;
         }
@@ -116,7 +206,13 @@
 
         #topbar-left h1 {
             margin: 0;
-            font-size: 18px;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        #topbar-left .subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
         }
 
         #topbar-right {
@@ -125,59 +221,73 @@
             gap: 8px;
         }
 
-        #imageModeBtn, #exportBtn {
-            padding: 5px 10px;
-            font-size: 12px;
-            cursor: pointer;
+        #compactToggle {
+            font-size: 11px;
+        }
+
+        #clearChatBtn {
+            font-size: 11px;
         }
 
         #chatContainer {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: var(--bg-panel);
+            padding: 12px;
         }
 
         #chat {
             flex: 1;
-            padding: 15px;
+            padding: 16px 20px;
             overflow-y: auto;
+            background: radial-gradient(circle at top left, #111827 0, #020617 40%, #000 100%);
+            border-radius: 18px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(148, 163, 184, 0.12);
         }
 
         .msg {
             display: flex;
             gap: 10px;
-            margin-bottom: 15px;
-            animation: fadeIn 0.25s ease;
+            margin-bottom: 14px;
+            opacity: 0;
+            transform: translateY(6px);
+            animation: fadeInUp 0.25s forwards ease-out;
         }
 
-        .msg.user { flex-direction: row-reverse; }
+        .msg.user {
+            flex-direction: row-reverse;
+        }
 
         .bubble {
-            padding: 10px;
-            border-radius: 10px;
-            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: var(--radius-lg);
+            max-width: min(700px, 72%);
             background: var(--bubble-bot);
             color: var(--text);
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+            border: 1px solid rgba(31,41,55,0.9);
         }
 
-        .user .bubble {
+        .msg.user .bubble {
             background: var(--bubble-user);
-            color: #fff;
+            border: none;
+            color: #f9fafb;
         }
 
         .avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
             background-size: cover;
             background-position: center;
+            box-shadow: 0 0 0 1px rgba(15,23,42,0.6);
         }
 
         #inputArea {
-            border-top: 1px solid #333;
-            padding: 10px;
-            background: var(--bg-panel);
+            padding: 12px 10px 14px;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -185,35 +295,167 @@
 
         #inputRow {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            align-items: flex-end;
         }
 
         #prompt {
             flex: 1;
-            padding: 8px;
+            padding: 10px 12px;
             font-size: 14px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(15,23,42,0.8);
+            color: var(--text);
+            resize: none;
+            max-height: 140px;
+            min-height: 40px;
+            line-height: 1.4;
+            outline: none;
+        }
+
+        #prompt:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(79,70,229,0.4);
         }
 
         #sendBtn {
-            padding: 8px 16px;
-            font-size: 14px;
-            cursor: pointer;
+            padding: 9px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            background: var(--accent);
+            color: white;
+            border: none;
+        }
+
+        #sendBtn:hover {
+            background: #4338ca;
         }
 
         #inputOptions {
             display: flex;
             justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            align-items: center;
+            padding: 0 4px;
+        }
+
+        #inputOptions .right {
+            display: flex;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            border-radius: 999px;
+            padding: 4px 8px;
+            font-size: 12px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-muted);
+        }
+
+        .icon-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        /* Copy button, token info */
+
+        .meta-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+            opacity: 0.85;
+        }
+
+        .copy-btn {
+            border: none;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 2px 4px;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent);
+        }
+
+        /* Compact mode */
+
+        body.compact .bubble {
+            padding: 7px 10px;
+            font-size: 13px;
+        }
+
+        body.compact .avatar {
+            display: none;
+        }
+
+        body.compact #chat {
+            padding: 10px 12px;
+        }
+
+        /* Animations */
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Markdown/Prism adjust */
+
+        pre {
+            background: #020617 !important;
+            border-radius: 10px;
+            padding: 10px 12px !important;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
             font-size: 12px;
         }
 
-        #micBtn, #ttsToggle {
-            padding: 5px 8px;
-            cursor: pointer;
+        .bubble p {
+            margin: 0 0 6px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
+        .bubble p:last-child {
+            margin-bottom: 0;
+        }
+
+        .bubble ul, .bubble ol {
+            margin: 0 0 6px 18px;
+        }
+
+        .bubble h1, .bubble h2, .bubble h3 {
+            margin: 4px 0;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 768px) {
+            #chat {
+                border-radius: 14px;
+                padding: 10px 10px;
+            }
+            #sidebar {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 230px;
+            }
         }
     </style>
 </head>
@@ -221,26 +463,31 @@
 
 <div id="sidebar">
     <div id="sidebar-header">
-        <h2>Chats</h2>
-        <div>
+        <h2>Verläufe</h2>
+        <div class="btn-group">
             <button id="newChatBtn">Neu</button>
-            <button id="themeToggle">Light</button>
+            <button id="themeToggle" class="secondary">Light</button>
         </div>
     </div>
     <div id="chatList"></div>
+    <div id="sidebar-footer">
+        <span id="chatCountLabel">0 Chats</span>
+        <button id="clearAllBtn" class="secondary">Alle löschen</button>
+    </div>
 </div>
 
 <div id="main">
     <div id="topbar">
         <div id="topbar-left">
-            <button id="menuToggle">☰</button>
-            <h1>Puter Ultra Chat</h1>
+            <button id="menuToggle" class="secondary">☰</button>
+            <div>
+                <h1>Puter Ultra Chat</h1>
+                <div class="subtitle">Einfaches Prinzip, Deluxe‑UI</div>
+            </div>
         </div>
-
         <div id="topbar-right">
-            <!-- keine Modell-Auswahl mehr -->
-            <button id="imageModeBtn">Text‑Modus</button>
-            <button id="exportBtn">Export</button>
+            <button id="compactToggle" class="secondary">Kompakt</button>
+            <button id="clearChatBtn" class="secondary">Verlauf löschen</button>
         </div>
     </div>
 
@@ -249,15 +496,16 @@
 
         <div id="inputArea">
             <div id="inputRow">
-                <input id="prompt" type="text" placeholder="Nachricht oder Bild‑Prompt...">
+                <textarea id="prompt" placeholder="Nachricht eingeben (Enter = senden, Shift+Enter = Zeile)"></textarea>
                 <button id="sendBtn">Senden</button>
             </div>
 
             <div id="inputOptions">
                 <span id="modeLabel">Modus: Chat</span>
-                <div>
-                    <button id="micBtn">🎙 Mic</button>
-                    <button id="ttsToggle">🔊 TTS an</button>
+                <div class="right">
+                    <button id="imageModeBtn" class="icon-btn">🖼 Bild</button>
+                    <button id="micBtn" class="icon-btn">🎙 Mic</button>
+                    <button id="ttsToggle" class="icon-btn">🔊 TTS an</button>
                 </div>
             </div>
         </div>
@@ -278,7 +526,7 @@ const input = document.getElementById("prompt");
 const sendBtn = document.getElementById("sendBtn");
 const newChatBtn = document.getElementById("newChatBtn");
 const chatList = document.getElementById("chatList");
-const exportBtn = document.getElementById("exportBtn");
+const exportBtn = document.getElementById("exportBtn"); // optional, falls du später wieder einen Export einbaust
 const imageModeBtn = document.getElementById("imageModeBtn");
 const modeLabel = document.getElementById("modeLabel");
 const themeToggle = document.getElementById("themeToggle");
@@ -286,6 +534,10 @@ const micBtn = document.getElementById("micBtn");
 const ttsToggle = document.getElementById("ttsToggle");
 const menuToggle = document.getElementById("menuToggle");
 const sidebar = document.getElementById("sidebar");
+const compactToggle = document.getElementById("compactToggle");
+const clearChatBtn = document.getElementById("clearChatBtn");
+const clearAllBtn = document.getElementById("clearAllBtn");
+const chatCountLabel = document.getElementById("chatCountLabel");
 
 let sessions = JSON.parse(localStorage.getItem("ultraSessions") || "[]");
 let currentSessionId = null;
@@ -302,6 +554,7 @@ if (localStorage.getItem("theme") === "light") {
 
 function saveSessions() {
     localStorage.setItem("ultraSessions", JSON.stringify(sessions));
+    chatCountLabel.textContent = sessions.length + (sessions.length === 1 ? " Chat" : " Chats");
 }
 
 function createSession() {
@@ -322,7 +575,12 @@ function renderSessionList() {
     sessions.forEach(s => {
         const div = document.createElement("div");
         div.className = "chat-item" + (s.id === currentSessionId ? " active" : "");
-        div.textContent = s.title;
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        const label = document.createElement("span");
+        label.textContent = s.title;
+        div.appendChild(dot);
+        div.appendChild(label);
         div.onclick = () => {
             currentSessionId = s.id;
             renderSessionList();
@@ -339,21 +597,27 @@ function renderCurrentSession() {
     if (!session) return;
 
     session.messages.forEach(m => {
-        addMessageToUI(m.text || "", m.sender, m.type === "image");
+        addMessageToUI(m.text || "", m.sender, m.type === "image", m.meta);
     });
+
+    setTimeout(() => {
+        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: "smooth" });
+    }, 20);
 }
 
-function addMessageToSession(text, sender, type = "text") {
+function addMessageToSession(text, sender, type = "text", meta = null) {
     const session = getCurrentSession();
-    session.messages.push({ text, sender, type });
+    if (!session) return;
+    session.messages.push({ text, sender, type, meta });
     if (session.title === "Neuer Chat" && sender === "user") {
-        session.title = text.slice(0, 30) + (text.length > 30 ? "…" : "");
+        const words = text.trim().split(/\s+/).slice(0, 6).join(" ");
+        session.title = words + (text.trim().split(/\s+/).length > 6 ? "…" : "");
     }
     saveSessions();
     renderSessionList();
 }
 
-function addMessageToUI(text, sender, isImage = false) {
+function addMessageToUI(text, sender, isImage = false, meta = null) {
     const msg = document.createElement("div");
     msg.className = "msg " + sender;
 
@@ -367,13 +631,39 @@ function addMessageToUI(text, sender, isImage = false) {
     if (isImage) {
         bubble.innerHTML = "Bild wird geladen...";
     } else {
-        bubble.innerHTML = (text ?? "").toString().replace(/\n/g, "<br>");
+        // Markdown + Prism
+        bubble.innerHTML = marked.parse(text ?? "");
+        Prism.highlightAllUnder(bubble);
     }
 
     msg.appendChild(avatar);
     msg.appendChild(bubble);
     chatBox.appendChild(msg);
-    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Meta-Info (Token, Copy) nur für Bot
+    if (sender === "bot") {
+        const metaRow = document.createElement("div");
+        metaRow.className = "meta-row";
+
+        // Token Schätzung
+        const tokenCount = Math.ceil((text || "").length / 4);
+        const tokenSpan = document.createElement("span");
+        tokenSpan.textContent = "~" + tokenCount + " Tokens";
+        metaRow.appendChild(tokenSpan);
+
+        // Copy Button
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.textContent = "📋 Kopieren";
+        copyBtn.onclick = () => navigator.clipboard.writeText(text || "");
+        metaRow.appendChild(copyBtn);
+
+        bubble.appendChild(metaRow);
+    }
+
+    setTimeout(() => {
+        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: "smooth" });
+    }, 10);
 
     return bubble;
 }
@@ -393,23 +683,51 @@ async function sendMessage() {
             const imgElem = await puter.ai.txt2img(text, { model: "gpt-image-1" });
 
             thinkingBubble.innerHTML = "";
-            imgElem.style.maxWidth = "300px";
-            imgElem.style.borderRadius = "8px";
+            imgElem.style.maxWidth = "320px";
+            imgElem.style.borderRadius = "10px";
             thinkingBubble.appendChild(imgElem);
 
             addMessageToSession(imgElem.src, "bot", "image");
             return;
         }
 
-        // Minimalprinzip wie in deinem Beispiel:
-        // const response = await puter.ai.chat("Explain AI like I'm five!");
+        // Dein Minimalprinzip: einfacher String rein, einfacher String raus
         const response = await puter.ai.chat(text);
 
-        thinkingBubble.innerHTML = (response ?? "").toString().replace(/\n/g, "<br>");
-        addMessageToSession(response, "bot");
+        // Pseudo-Streaming
+        const finalText = (response ?? "").toString();
+        let i = 0;
+        const interval = setInterval(() => {
+            const partial = finalText.slice(0, i);
+            thinkingBubble.innerHTML = marked.parse(partial);
+            Prism.highlightAllUnder(thinkingBubble);
+            i++;
+            if (i > finalText.length) {
+                clearInterval(interval);
 
-        if (ttsEnabled && response) {
-            const utter = new SpeechSynthesisUtterance(response);
+                // Token/Copy unten ergänzen
+                const tokenCount = Math.ceil(finalText.length / 4);
+                const metaRow = document.createElement("div");
+                metaRow.className = "meta-row";
+
+                const tokenSpan = document.createElement("span");
+                tokenSpan.textContent = "~" + tokenCount + " Tokens";
+                metaRow.appendChild(tokenSpan);
+
+                const copyBtn = document.createElement("button");
+                copyBtn.className = "copy-btn";
+                copyBtn.textContent = "📋 Kopieren";
+                copyBtn.onclick = () => navigator.clipboard.writeText(finalText);
+                metaRow.appendChild(copyBtn);
+
+                thinkingBubble.appendChild(metaRow);
+            }
+        }, 8);
+
+        addMessageToSession(finalText, "bot");
+
+        if (ttsEnabled && finalText) {
+            const utter = new SpeechSynthesisUtterance(finalText);
             utter.lang = "de-DE";
             speechSynthesis.speak(utter);
         }
@@ -422,14 +740,17 @@ async function sendMessage() {
 
 sendBtn.onclick = sendMessage;
 input.addEventListener("keydown", e => {
-    if (e.key === "Enter") { e.preventDefault(); sendMessage(); }
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
 });
 
 newChatBtn.onclick = createSession;
 
 imageModeBtn.onclick = () => {
     imageMode = !imageMode;
-    imageModeBtn.textContent = imageMode ? "Bild‑Modus" : "Text‑Modus";
+    imageModeBtn.textContent = imageMode ? "🖼 Bild an" : "🖼 Bild";
     modeLabel.textContent = "Modus: " + (imageMode ? "Bild" : "Chat");
 };
 
@@ -452,36 +773,47 @@ micBtn.onclick = () => {
     rec.lang = "de-DE";
     rec.start();
     micBtn.textContent = "🎙…";
-    rec.onresult = e => { input.value = e.results[0][0].transcript; micBtn.textContent = "🎙 Mic"; };
+    rec.onresult = e => {
+        input.value = (input.value ? input.value + " " : "") + e.results[0][0].transcript;
+        micBtn.textContent = "🎙 Mic";
+    };
     rec.onerror = () => micBtn.textContent = "🎙 Mic";
     rec.onend = () => micBtn.textContent = "🎙 Mic";
 };
 
-exportBtn.onclick = () => {
+compactToggle.onclick = () => {
+    document.body.classList.toggle("compact");
+};
+
+clearChatBtn.onclick = () => {
     const session = getCurrentSession();
-    let text = "Chat Export – " + session.title + "\n\n";
-    session.messages.forEach(m => {
-        text += (m.sender === "user" ? "Du: " : "Bot: ");
-        text += m.type === "image" ? "[Bild] " + m.text : m.text;
-        text += "\n";
-    });
-    const blob = new Blob([text], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "chat_export.txt";
-    a.click();
-    URL.revokeObjectURL(url);
+    if (!session) return;
+    if (!confirm("Diesen Verlauf wirklich löschen?")) return;
+    session.messages = [];
+    saveSessions();
+    renderCurrentSession();
+};
+
+clearAllBtn.onclick = () => {
+    if (!confirm("Alle Verläufe wirklich löschen?")) return;
+    sessions = [];
+    currentSessionId = null;
+    saveSessions();
+    renderSessionList();
+    chatBox.innerHTML = "";
+    createSession();
 };
 
 menuToggle.onclick = () => {
-    sidebar.style.display =
-        getComputedStyle(sidebar).display === "none" ? "flex" : "none";
+    const style = getComputedStyle(sidebar);
+    sidebar.style.display = style.display === "none" ? "flex" : "none";
 };
 
-if (sessions.length === 0) createSession();
-else {
+if (sessions.length === 0) {
+    createSession();
+} else {
     currentSessionId = sessions[0].id;
+    saveSessions();
     renderSessionList();
     renderCurrentSession();
 }
