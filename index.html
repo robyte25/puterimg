@@ -435,9 +435,18 @@ async function sendMessage() {
             }
         })
         .catch(err => {
-            thinkingBubble.innerHTML = "Fehler bei der Anfrage.";
-            console.error(err);
-        });
+    console.error("PUTER ERROR:", err);
+
+    let msg = "Fehler bei der Anfrage.";
+
+    if (err?.message) msg += "<br><br><b>Message:</b> " + err.message;
+    if (err?.response?.error) msg += "<br><br><b>API Error:</b> " + err.response.error;
+    if (err?.response?.message) msg += "<br><br><b>API Message:</b> " + err.response.message;
+    if (err?.status) msg += "<br><br><b>Status:</b> " + err.status;
+
+    thinkingBubble.innerHTML = msg;
+});
+
 
     } catch (err) {
         thinkingBubble.innerHTML = "Fehler bei der Anfrage.";
