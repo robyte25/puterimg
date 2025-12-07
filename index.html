@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Puter Ultra Chat – gpt‑4o Version</title>
+    <title>Puter Ultra Chat – Modellwahl</title>
     <script src="https://js.puter.com/v2/"></script>
 
     <style>
@@ -39,18 +39,13 @@
             overflow: hidden;
         }
 
-        /* Mobile Layout */
         body.mobile #sidebar { display: none; }
         body.mobile #main { width: 100%; }
         body.mobile #menuToggle { display: inline-block; }
 
-        /* Tablet */
         body.tablet #sidebar { width: 180px; }
-
-        /* Desktop */
         body.desktop #sidebar { width: 250px; }
 
-        /* SIDEBAR */
         #sidebar {
             background: var(--bg-sidebar);
             border-right: 1px solid #333;
@@ -91,7 +86,6 @@
             color: #fff;
         }
 
-        /* MAIN */
         #main {
             flex: 1;
             display: flex;
@@ -131,13 +125,17 @@
             gap: 8px;
         }
 
+        #modelSelect {
+            padding: 5px;
+            font-size: 12px;
+        }
+
         #imageModeBtn, #exportBtn {
             padding: 5px 10px;
             font-size: 12px;
             cursor: pointer;
         }
 
-        /* CHAT */
         #chatContainer {
             flex: 1;
             display: flex;
@@ -181,7 +179,6 @@
             background-position: center;
         }
 
-        /* INPUT */
         #inputArea {
             border-top: 1px solid #333;
             padding: 10px;
@@ -227,7 +224,6 @@
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <div id="sidebar">
     <div id="sidebar-header">
         <h2>Chats</h2>
@@ -239,7 +235,6 @@
     <div id="chatList"></div>
 </div>
 
-<!-- MAIN -->
 <div id="main">
     <div id="topbar">
         <div id="topbar-left">
@@ -248,6 +243,16 @@
         </div>
 
         <div id="topbar-right">
+
+            <!-- ✅ Modell-Auswahl -->
+            <select id="modelSelect">
+                <option value="gpt-5-nano">gpt‑5‑nano</option>
+                <option value="gpt-4.1-mini">gpt‑4.1-mini</option>
+                <option value="gpt-4o-mini">gpt‑4o-mini</option>
+                <option value="gpt-4.1">gpt‑4.1</option>
+                <option value="gpt-4o">gpt‑4o</option>
+            </select>
+
             <button id="imageModeBtn">Text‑Modus</button>
             <button id="exportBtn">Export</button>
         </div>
@@ -274,7 +279,6 @@
 </div>
 
 <script>
-/* DEVICE DETECTION */
 function detectDevice() {
     const ua = navigator.userAgent.toLowerCase();
     if (/mobile|iphone|android|phone/.test(ua)) return "mobile";
@@ -283,7 +287,6 @@ function detectDevice() {
 }
 document.body.classList.add(detectDevice());
 
-/* STATE */
 const chatBox = document.getElementById("chat");
 const input = document.getElementById("prompt");
 const sendBtn = document.getElementById("sendBtn");
@@ -297,6 +300,7 @@ const micBtn = document.getElementById("micBtn");
 const ttsToggle = document.getElementById("ttsToggle");
 const menuToggle = document.getElementById("menuToggle");
 const sidebar = document.getElementById("sidebar");
+const modelSelect = document.getElementById("modelSelect");
 
 let sessions = JSON.parse(localStorage.getItem("ultraSessions") || "[]");
 let currentSessionId = null;
@@ -306,13 +310,11 @@ let ttsEnabled = true;
 const userAvatar = "https://i.imgur.com/4ZQZ4ZQ.png";
 const botAvatar = "https://i.imgur.com/8Km9tLL.png";
 
-/* THEME RESTORE */
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
     themeToggle.textContent = "Dark";
 }
 
-/* SESSION HANDLING */
 function saveSessions() {
     localStorage.setItem("ultraSessions", JSON.stringify(sessions));
 }
@@ -376,7 +378,6 @@ function addMessageToSession(text, sender, type = "text") {
     renderSessionList();
 }
 
-/* UI MESSAGE */
 function addMessageToUI(text, sender, isImage = false) {
     const msg = document.createElement("div");
     msg.className = "msg " + sender;
@@ -397,7 +398,6 @@ function addMessageToUI(text, sender, isImage = false) {
     return bubble;
 }
 
-/* SEND MESSAGE — YOUR PRINCIPLE */
 async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
@@ -411,22 +411,31 @@ async function sendMessage() {
     try {
         if (imageMode) {
             const imgElem = await puter.ai.txt2img(text, { model: "gpt-image-1" });
+
             thinkingBubble.innerHTML = "";
             imgElem.style.maxWidth = "300px";
             imgElem.style.borderRadius = "8px";
             thinkingBubble.appendChild(imgElem);
+
             addMessageToSession(imgElem.src, "bot", "image");
             return;
         }
 
-        /* ✅ YOUR PRINCIPLE — ONLY THIS */
-        puter.ai.chat(text, { model: "gpt-5-nano" })
-            .then(response => {
-                thinkingBubble.innerHTML = response.replace(/\n/g, "<br>");
-                addMessageToSession(response, "bot");
+        const selectedModel = modelSelect.value;
 
-                if (ttsEnabled) {
-                    const utter = new SpeechSynthesisUtterance(response);
+        puter.ai.chat(text, { model: selectedModel })
+            .then(response => {
+
+                const msg = response?.choices?.[0]?.message?.content;
+
+                thinkingBubble.innerHTML = msg
+                    ? msg.replace(/\n/g, "<br>")
+                    : "Keine Antwort erhalten.";
+
+                addMessageToSession(msg, "bot");
+
+                if (ttsEnabled && msg) {
+                    const utter = new SpeechSynthesisUtterance(msg);
                     utter.lang = "de-DE";
                     speechSynthesis.speak(utter);
                 }
@@ -442,7 +451,6 @@ async function sendMessage() {
     }
 }
 
-/* EVENTS */
 sendBtn.onclick = sendMessage;
 input.addEventListener("keydown", e => {
     if (e.key === "Enter") { e.preventDefault(); sendMessage(); }
@@ -502,7 +510,6 @@ menuToggle.onclick = () => {
         getComputedStyle(sidebar).display === "none" ? "flex" : "none";
 };
 
-/* INITIAL LOAD */
 if (sessions.length === 0) createSession();
 else {
     currentSessionId = sessions[0].id;
