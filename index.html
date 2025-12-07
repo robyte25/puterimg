@@ -243,8 +243,6 @@
         </div>
 
         <div id="topbar-right">
-
-            <!-- ✅ Modell-Auswahl -->
             <select id="modelSelect">
                 <option value="gpt-5-nano">gpt‑5‑nano</option>
                 <option value="gpt-4.1-mini">gpt‑4.1-mini</option>
@@ -363,7 +361,7 @@ function renderCurrentSession() {
             bubble.innerHTML = "";
             bubble.appendChild(img);
         } else {
-            addMessageToUI(m.text, m.sender);
+            addMessageToUI(m.text || "", m.sender);
         }
     });
 }
@@ -388,7 +386,7 @@ function addMessageToUI(text, sender, isImage = false) {
 
     const bubble = document.createElement("div");
     bubble.className = "bubble";
-    bubble.innerHTML = isImage ? "Bild wird geladen..." : text.replace(/\n/g, "<br>");
+    bubble.innerHTML = isImage ? "Bild wird geladen..." : (text || "").replace(/\n/g, "<br>");
 
     msg.appendChild(avatar);
     msg.appendChild(bubble);
@@ -423,10 +421,10 @@ async function sendMessage() {
 
         const selectedModel = modelSelect.value;
 
+        // Dein Prinzip + richtige Antwortstruktur
         puter.ai.chat(text, { model: selectedModel })
             .then(response => {
-
-                const msg = response?.choices?.[0]?.message?.content;
+                const msg = response?.response; // Hier liefert Puter den Text
 
                 thinkingBubble.innerHTML = msg
                     ? msg.replace(/\n/g, "<br>")
