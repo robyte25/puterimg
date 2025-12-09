@@ -172,300 +172,6 @@
             justify-content: space-between;
             align-items: center;
         }
-
-        /* Main layout */
-
-        #main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            backdrop-filter: blur(18px);
-        }
-
-        #topbar {
-            padding: 10px 18px;
-            border-bottom: 1px solid var(--border-subtle);
-            background: linear-gradient(90deg, rgba(15,23,42,0.96), rgba(15,23,42,0.88));
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            z-index: 5;
-        }
-
-        #menuToggle {
-            display: none;
-            padding: 6px 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        #topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #topbar-left h1 {
-            margin: 0;
-            font-size: 17px;
-            font-weight: 600;
-        }
-
-        #topbar-left .subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        #topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        #compactToggle {
-            font-size: 11px;
-        }
-
-        #clearChatBtn {
-            font-size: 11px;
-        }
-
-        /* Chat container + scroll fix */
-
-        #chatContainer {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 12px;
-            min-height: 0; /* damit der Bereich nicht überläuft, sondern der Chat scrollt */
-        }
-
-        #chat {
-            flex: 1;
-            padding: 16px 20px;
-            overflow-y: auto;
-            background: radial-gradient(circle at top left, #111827 0, #020617 40%, #000 100%);
-            border-radius: 18px;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(148, 163, 184, 0.12);
-            min-height: 0;           /* wichtig für Flexbox-Scroll */
-            scroll-behavior: smooth; /* weiches Scrollen */
-        }
-
-        .msg {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 14px;
-            opacity: 0;
-            transform: translateY(6px);
-            animation: fadeInUp 0.25s forwards ease-out;
-        }
-
-        .msg.user {
-            flex-direction: row-reverse;
-        }
-
-        .bubble {
-            padding: 10px 14px;
-            border-radius: var(--radius-lg);
-            max-width: min(700px, 72%);
-            background: var(--bubble-bot);
-            color: var(--text);
-            font-size: 14px;
-            line-height: 1.6;
-            position: relative;
-            border: 1px solid rgba(31,41,55,0.9);
-        }
-
-        .msg.user .bubble {
-            background: var(--bubble-user);
-            border: none;
-            color: #f9fafb;
-        }
-
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 999px;
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 0 0 1px rgba(15,23,42,0.6);
-        }
-
-        /* Input area */
-
-        #inputArea {
-            padding: 12px 10px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        #inputRow {
-            display: flex;
-            gap: 8px;
-            align-items: flex-end;
-        }
-
-        #prompt {
-            flex: 1;
-            padding: 10px 12px;
-            font-size: 14px;
-            border-radius: 999px;
-            border: 1px solid var(--border-subtle);
-            background: rgba(15,23,42,0.8);
-            color: var(--text);
-            resize: none;
-            max-height: 140px;
-            min-height: 40px;
-            line-height: 1.4;
-            outline: none;
-        }
-
-        #prompt:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 1px rgba(79,70,229,0.4);
-        }
-
-        #sendBtn {
-            padding: 9px 16px;
-            border-radius: 999px;
-            font-size: 13px;
-            background: var(--accent);
-            color: white;
-            border: none;
-        }
-
-        #sendBtn:hover {
-            background: #4338ca;
-        }
-
-        #inputOptions {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-muted);
-            align-items: center;
-            padding: 0 4px;
-        }
-
-        #inputOptions .right {
-            display: flex;
-            gap: 6px;
-        }
-
-        .icon-btn {
-            border-radius: 999px;
-            padding: 4px 8px;
-            font-size: 12px;
-            border: 1px solid var(--border-subtle);
-            background: transparent;
-            color: var(--text-muted);
-        }
-
-        .icon-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(79, 70, 229, 0.1);
-        }
-
-        /* Meta / token / copy */
-
-        .meta-row {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 8px;
-            margin-top: 6px;
-            font-size: 11px;
-            color: var(--text-muted);
-            opacity: 0.85;
-        }
-
-        .copy-btn {
-            border: none;
-            background: transparent;
-            color: inherit;
-            cursor: pointer;
-            font-size: 12px;
-            padding: 2px 4px;
-        }
-
-        .copy-btn:hover {
-            color: var(--accent);
-        }
-
-        /* Compact mode */
-
-        body.compact .bubble {
-            padding: 7px 10px;
-            font-size: 13px;
-        }
-
-        body.compact .avatar {
-            display: none;
-        }
-
-        body.compact #chat {
-            padding: 10px 12px;
-        }
-
-        /* Animations */
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Markdown/Prism */
-
-        pre {
-            background: #020617 !important;
-            border-radius: 10px;
-            padding: 10px 12px !important;
-            font-size: 12px;
-            overflow-x: auto;
-        }
-
-        code {
-            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 12px;
-        }
-
-        .bubble p {
-            margin: 0 0 6px;
-        }
-
-        .bubble p:last-child {
-            margin-bottom: 0;
-        }
-
-        .bubble ul, .bubble ol {
-            margin: 0 0 6px 18px;
-        }
-
-        .bubble h1, .bubble h2, .bubble h3 {
-            margin: 4px 0;
-        }
-
-        /* Mobile */
-
-        @media (max-width: 768px) {
-            #chat {
-                border-radius: 14px;
-                padding: 10px 10px;
-            }
-            #sidebar {
-                position: absolute;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                width: 230px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -499,7 +205,6 @@
             <button id="clearChatBtn" class="secondary">Verlauf löschen</button>
         </div>
     </div>
-
     <div id="chatContainer">
         <div id="chat"></div>
 
@@ -520,7 +225,6 @@
         </div>
     </div>
 </div>
-
 <script>
 function detectDevice() {
     const ua = navigator.userAgent.toLowerCase();
@@ -625,6 +329,7 @@ function addMessageToSession(text, sender, type = "text", meta = null) {
     renderSessionList();
 }
 
+/* Neue addMessageToUI mit Code-Erkennung und separater Code-Nachricht */
 function addMessageToUI(text, sender, isImage = false, meta = null) {
     const msg = document.createElement("div");
     msg.className = "msg " + sender;
@@ -639,7 +344,9 @@ function addMessageToUI(text, sender, isImage = false, meta = null) {
     if (isImage) {
         bubble.innerHTML = "Bild wird geladen...";
     } else {
-        bubble.innerHTML = marked.parse(text ?? "");
+        // normalen Text ohne Codeblöcke rendern
+        const cleaned = (text || "").replace(/```[\s\S]*?```/g, "").trim();
+        bubble.innerHTML = marked.parse(cleaned || "");
         Prism.highlightAllUnder(bubble);
     }
 
@@ -647,6 +354,45 @@ function addMessageToUI(text, sender, isImage = false, meta = null) {
     msg.appendChild(bubble);
     chatBox.appendChild(msg);
 
+    // Codeblöcke erkennen und als separate, formatierte Nachrichten anhängen
+    const codeBlocks = [...(text || "").matchAll(/```([a-zA-Z0-9]*)\n([\s\S]*?)```/g)];
+
+    for (const block of codeBlocks) {
+        const lang = block[1] || "plaintext";
+        const code = block[2];
+
+        const codeMsg = document.createElement("div");
+        codeMsg.className = "msg bot";
+
+        const codeAvatar = document.createElement("div");
+        codeAvatar.className = "avatar";
+        codeAvatar.style.backgroundImage = `url(${botAvatar})`;
+
+        const codeBubble = document.createElement("div");
+        codeBubble.className = "bubble";
+
+        codeBubble.innerHTML = `
+            <pre><code class="language-${lang}">${code.replace(/</g, "&lt;")}</code></pre>
+        `;
+
+        codeMsg.appendChild(codeAvatar);
+        codeMsg.appendChild(codeBubble);
+        chatBox.appendChild(codeMsg);
+
+        Prism.highlightAllUnder(codeBubble);
+
+        // Copy-Button für den Codeblock
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.textContent = "📋 Kopieren";
+        copyBtn.onclick = () => navigator.clipboard.writeText(code);
+        const metaRow = document.createElement("div");
+        metaRow.className = "meta-row";
+        metaRow.appendChild(copyBtn);
+        codeBubble.appendChild(metaRow);
+    }
+
+    // Meta-Infos (Token + Copy) für normale Bot-Nachricht
     if (sender === "bot") {
         const metaRow = document.createElement("div");
         metaRow.className = "meta-row";
@@ -698,6 +444,7 @@ async function sendMessage() {
         const response = await puter.ai.chat(text);
         const finalText = (response ?? "").toString();
 
+        // Pseudo-Streaming: Text wird "getippt" angezeigt
         let i = 0;
         const interval = setInterval(() => {
             const partial = finalText.slice(0, i);
@@ -707,6 +454,7 @@ async function sendMessage() {
             if (i > finalText.length) {
                 clearInterval(interval);
 
+                // Meta (Token + Copy) wird unten ergänzt
                 const tokenCount = Math.ceil(finalText.length / 4);
                 const metaRow = document.createElement("div");
                 metaRow.className = "meta-row";
@@ -722,6 +470,42 @@ async function sendMessage() {
                 metaRow.appendChild(copyBtn);
 
                 thinkingBubble.appendChild(metaRow);
+
+                // Falls Codeblöcke vorhanden sind, werden sie zusätzlich als separate Nachrichten angehängt
+                const codeBlocks = [...finalText.matchAll(/```([a-zA-Z0-9]*)\n([\s\S]*?)```/g)];
+                for (const block of codeBlocks) {
+                    const lang = block[1] || "plaintext";
+                    const code = block[2];
+
+                    const codeMsg = document.createElement("div");
+                    codeMsg.className = "msg bot";
+
+                    const codeAvatar = document.createElement("div");
+                    codeAvatar.className = "avatar";
+                    codeAvatar.style.backgroundImage = `url(${botAvatar})`;
+
+                    const codeBubble = document.createElement("div");
+                    codeBubble.className = "bubble";
+
+                    codeBubble.innerHTML = `
+                        <pre><code class="language-${lang}">${code.replace(/</g, "&lt;")}</code></pre>
+                    `;
+
+                    codeMsg.appendChild(codeAvatar);
+                    codeMsg.appendChild(codeBubble);
+                    chatBox.appendChild(codeMsg);
+
+                    Prism.highlightAllUnder(codeBubble);
+
+                    const copyBtn2 = document.createElement("button");
+                    copyBtn2.className = "copy-btn";
+                    copyBtn2.textContent = "📋 Kopieren";
+                    copyBtn2.onclick = () => navigator.clipboard.writeText(code);
+                    const metaRow2 = document.createElement("div");
+                    metaRow2.className = "meta-row";
+                    metaRow2.appendChild(copyBtn2);
+                    codeBubble.appendChild(metaRow2);
+                }
             }
         }, 8);
 
